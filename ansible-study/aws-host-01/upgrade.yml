@@ -1,0 +1,8 @@
+---
+- name: Upgrade apt packages on Ubuntu
+  hosts: ubuntu
+  become: yes
+  tasks:
+    - name: Upgrade all apt packages
+      apt:
+        upgrade: dist

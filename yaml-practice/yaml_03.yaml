@@ -1,0 +1,21 @@
+people:
+  - Hunter:
+    age: 30
+    hair: brown
+    eyes: blue
+  - Steph:
+    age: 28
+    hair: brown
+    eyes: blue
+  - Laura:
+    age: 4
+    hair: brown
+    eyes: blue
+  - Emily:
+    age: 54
+    hair: brown
+    eyes: green
+  - Ethan:
+    age: 28
+    hair: blonde
+    eyes: blue
