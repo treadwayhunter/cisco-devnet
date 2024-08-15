@@ -1,0 +1,71 @@
+---
+- name: Lookup interfaces with ip addresses
+  hosts: cisco_switches
+  gather_facts: no
+  tasks:
+    - name: Run 'show interfaces'
+      cisco.ios.ios_command:
+        commands:
+          - show ip int brief | e unassigned
+      register: interface_output
+    
+    - name: Remove top row from interface_output stdout_lines
+      set_fact:
+        interfaces: "{{ interface_output.stdout_lines[0][1:] }} "
+
+    - name: Print interfaces
+      debug:
+        var: interfaces
+
+    #- name: Store single interface
+    #  set_fact:
+    #    interface: " {{ interfaces[0].split(' ')[0] }} "
+ 
+    #- name: Run 'show run int GigabitEthernet1'
+    #  cisco.ios.ios_command:
+    #    commands:
+    #      - show run int {{ interface }}
+    #  register: interface_details
+
+    #- name: Print interface details
+    #  debug:
+    #    var: interface_details
+    - name: Initialize the interface_names list
+      set_fact: 
+        interface_names: []
+    # 
+
+    - name: Iterate through interfaces to extract names
+      set_fact:
+        interface_names: "{{ interface_names + [item.split()[0]] }}"
+      loop: "{{ interfaces }}"
+    
+    - name: Print the list of interface names
+      debug:
+        var: interface_names
+
+    - name: Set interface_details list
+      set_fact:
+        interface_details: []
+
+    - name: Run show commands on each inerface
+      cisco.ios.ios_command:
+        commands:
+          - show run int {{ item }}
+      register: interface_output
+      loop: "{{ interface_names }}"
+
+    - name: Print interface_output
+      debug:
+        var: interface_output
+
+    - name: 
+      set_fact:
+        interface_details: "{{ interface_details + [{'interface': item, 'config': interface_output.stdout}] }}"
+      loop: "{{ interface_names }}"
+      loop_control:
+        loop_var: item
+
+    - name: Print interface details
+      debug:
+        var: interface_details
